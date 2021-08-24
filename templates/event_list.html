@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+ <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>
+
+ <div id="mapid"></div>
+
+<script>
+
+  var mymap = L.map('mapid').setView([51	, 4], 13);  
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox.streets',
+      accessToken: 'pk.eyJ1IjoieWJ1eXVrIiwiYSI6ImNqcDZ2Z3VxNTA4M2Eza3BqNzBuajl5Ym0ifQ.3GJJH-80h6b_rbvq1RT_jQ'}).addTo(mymap);
+
+  /* HTML5 geolocation */
+  window.onload = getLocation;      
+
+  /*     Here we will check if the browser supports the Geolocation API; if exists, then we will display the location     */    
+  var geo = navigator.geolocation;     
+
+  function getLocation() {       
+    if(geo) {    
+      geo.getCurrentPosition(displayLocation); 
+    } else  {
+      alert( "Oops, Geolocation API is not supported");        
+    }     
+  }         
+
+/*     This function displays the latitude and longitude when the browser has a location.     */   
+
+  function displayLocation( position ) {         
+        var latitude = position.coords.latitude;        
+        var longitude = position.coords.longitude;  
+	      mymap.setView([latitude, longitude]);
+	      var marker = L.marker([latitude, longitude]).addTo(mymap);
+	}
+
+  function doAddressLookup(location) {
+    window.addEventListener("load", function(event) {
+    /* We are using OSM Nominatim service. */
+    var geocode = 'https://nominatim.openstreetmap.org/search?format=json&q=' + location;
+
+    /* Use jQuery to call the API and get the JSON results. */
+    $.getJSON(geocode, function(data) {
+        var latlng = [data[0].lat, data[0].lon];
+        console.log(latlng);
+        L.marker(latlng).addTo(mymap);
+      });
+    });
+  }
+</script>
+
+<div style="margin: 1em;">
+    <button id="create_events" class="btn btn-danger" onclick="document.getElementById('id01').style.display='block'">Create an event</button>
+</div>
+  
+<div class="container-fluid" style="margin-top: 2em;">
+  <div class="colomn">
+
+
+<div class="row" style="padding: 1em;">
+
+{% for event in events %}
+
+<!-- For every event in events we lookup their adres and add a marker to the map. -->
+<script>doAddressLookup('{{event.streetname|escapejs}} {{event.streetnumber|escapejs}}, {{event.zipcode|escapejs}} {{event.city|escapejs}} {{event.country|escapejs}}');</script>
+
+<!-- Event card --> 
+<div class="col-sm-3" style="padding: 0em;">
+  <div class="card" style="height: 350px; max-height: 350px; overflow: hidden;">
+      <div class="card-body">
+        <h4 class="card-title"><b>{{ event.title }}</b></h4>
+        <p class="card-text">
+            <b>Date:</b> {{event.date}} <br>
+            <b>Time:</b> {{event.time}} <br>
+            <b>Address:</b> {{event.streetname }} {{event.streetnumber}}, {{event.zipcode}} {{event.city}} {{event.country}} <br>
+            <b>Movie(s) to watch:</b> {{event.movies}} <br>
+            <b>Max # of participants:</b> {{event.maxlimit}}<br>
+            <b>Currently participating:</b> {{event.users.count}}
+        </p>
+      </div>
+      <div class="card-body">
+        <form action="/events/{{ event.id }}/delete">
+          <button type="submit" class="btn btn-danger hover_button"><i class="fas fa-trash"></i></button>
+        </form>
+          {% if user in event.users.all %}
+          <!-- Takes care of the event icon -- an user participates in an event or they do not. -->
+            <form action="/events/{{ event.id}}/unparticipate/{{user.id}}">
+              <button type="submit" class="btn btn-info hover_button" ><i class="far fa-calendar-check"></i></button>
+            </form>
+          {% else %}
+            <form action="/events/{{ event.id}}/participate/{{user.id}}">
+              <button type="submit" class="btn btn-info hover_button" ><i class="far fa-calendar-alt"></i></button>
+            </form>
+          {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+</div>
+<!-- The Modal (contains the create event form) -->
+<div id="id01" class="modal" style="z-index: 1000">
+  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">times;</span>
+  <form class="modal-content" action="/events/add" method="POST">
+    {% csrf_token %}
+    <div class="container">
+      <h1>Create an event</h1>
+      <p>Please fill in this form to create an event.</p>
+      <hr>
+      <label for="title"><b>Event title</b></label>
+      <input type="text" placeholder="Enter event title" name="title" required>
+      <label for="moviename"><b>Movie name</b></label>
+      <div class="input-group mb-3">
+          <select name="moviename" class="custom-select">
+              {% for movie in movies %}
+             <option value="{{movie.title}}">
+                {{movie.title}} 
+             </option>
+             {% endfor %}
+          </select>
+        </div>
+        
+      <!--<input type="list" placeholder="Enter a movie name" name="moviename" required>-->
+      
+      <label for="date"><b>Date</b></label>
+      <input type="date" name="date" required>
+      
+      <label for="time"><b>Time</b></label>
+      <input type="time" name="time" required>
+      
+      <label for="maxlimit"><b>Capacity</b></label>
+      <input type="number" min="1" name="maxlimit" required>
+      
+      <label for="streetname"><b>Street name</b></label>
+      <input type="text" placeholder="Enter street name" name="streetname" required>
+      
+      <label for="streetnumber"><b>Street number</b></label>
+      <input type="text" placeholder="Enter street number" name="streetnumber" required>
+      
+      <label for="city"><b>City</b></label>
+      <input type="text" placeholder="Enter city name" name="city" required>
+      
+      <label for="zipcode"><b>Zipcode</b></label>
+      <input type="text" placeholder="Enter zipcode" name="zipcode" required>
+      
+      <label for="country"><b>Country name</b></label>
+      <input type="text" placeholder="Enter country name" name="country" required>
+
+      <div class="clearfix">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+        <button type="submit" class="submitbtn">Submit</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock%}

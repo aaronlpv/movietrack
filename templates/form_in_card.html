@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% load widgettweaks %}
+
+{% block title %}Form{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  {% block before-card %}
+  {% endblock before-card %}
+  <div class="row justify-content-md-center">
+    <div class="sm-col-6">
+      <div class="card">
+        <h5 class="card-header">
+          {% block card-header %}Form{% endblock %}
+        </h5>
+        <div class="card-body">
+          {% block before-form %}{% endblock %}
+          <form {% block form-technicals %}method="POST" action=""{% endblock %}>
+            {% csrf_token %}
+            {% block in_form %}
+            {% endblock in_form %}
+
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}" class="strong">{{ field.label }} {{ field.help_text }}</label>
+              {{ field|add_class:'form-control' }}
+              {% for error in field.errors %}
+                <span class="form-error">{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-primary btn-block" type="submit">{% block submit %}Submit{% endblock %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% block after-card %}
+  {% endblock after-card %}
+</div>
+{% endblock content %}

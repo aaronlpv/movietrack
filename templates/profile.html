@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% load widgettweaks %}
+
+{% block title %}{{ profile.user.username|title }}'s profile{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="profile-header">{{ profile.user.username|title }}'s Profile</h5>
+      {% if user.is_authenticated %}
+      <div class="profile-top-btns">
+        {% if user.profile == profile %}
+        <a href="{% url 'profile-edit' %}"><span class="fas fa-edit"></span> Edit</a>
+        {% else %}
+          {% with pid=profile.user.id %}
+            {% if friend %}
+            <script>friends = { {{ pid }}: true }</script>
+            <button id="friend-toggle-{{ pid }}" type="button" class="btn btn-success" onclick="friend({{ pid }})">
+              <span class="fas fa-user-friends"></span> <span id="friend-status-{{ pid }}">Friends</span>
+            </button>
+            {% elif friendship_pending %}
+            <script>friends = { {{ profile.user.id }}: false}</script>
+            <button id="friend-toggle-{{ pid }}" type="button" class="btn btn-secondary" onclick="friend({{ pid }})">
+              <span class="fas fa-user-friends"></span> <span id="friend-status-{{ pid }}">Friend request pending</span>
+            </button>
+            {% else %}
+            <script>friends = {}</script>
+            <button id="friend-toggle-{{ pid }}" type="button" class="btn btn-info" onclick="friend({{ pid }})">
+              <span class="fas fa-user-friends"></span> <span id="friend-status-{{ pid }}">Add friend</span>
+            </button>
+            {% endif %}
+          {% endwith %}
+        {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <div class="row border-bottom pb-2">
+        <div class="col-xl-3 col-lg-4 col-md-5">
+          <img class="profile-pic mb-2" src="{{ profile.get_profile_pic }}">          
+          <a class="btn btn-primary btn-block" href="{% url 'seen' profile.user.pk %}">Seenlist</a>
+          <a class="btn btn-primary btn-block" href="{% url 'wtw' profile.user.pk %}">Want To Watch</a>
+        </div>
+        <div class="profile-bio col-xl-9 col-lg-8 col-md-7">
+          {{ profile.bio|default:"This user has not added a bio." }}
+        </div>
+      </div>
+      <div class="row border-bottom">
+        <div class="profile-friend-list col-xl-3 col-lg-4 col-md-5 border-right">
+          <div class="row profile-friends-header border-bottom">Friends ({{ profile.friends.count }})</div>
+          {% for friend in profile.friends.all %}
+          <div class="row border-bottom">
+            <div class="col-6">
+              <img class="profile-friend-pic m-1" src="{{ friend.get_profile_pic }}">
+            </div>
+            <div class="col-6 my-auto">
+              <a href="{% url 'profile' friend.user.pk %}">{{ friend }}</a>
+            </div>
+          </div>
+          {% endfor %}
+          <div class="row">
+            <a href="{% url 'friends' profile.user.pk %}">View friendlist</a>
+          </div>
+        </div>
+        <div class="profile-stats col-xl-9 col-lg-8 col-md-7">
+          Watched {{ days_watched|floatformat }} days worth of movies<br>
+          {% if user.is_authenticated and profile != user.profile and common > 0 %}
+            Your affinity with this user is {{ affinity|floatformat }} ({{ common }} rating{{ common|pluralize }})
+            <div class="progress affinity-bar">
+              <div class="progress-bar" style="width: {% widthratio affinity 1 10 %}%">Affinity</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="profile-favorites row">
+        <div class="movie-list">
+          {% if profile.favorites %}
+          {% for movie in profile.favorites.all %}
+          <a href="{% url 'movie' movie.pk %}">
+          <div class="movie-entry">
+          <img src="{{ MEDIA_URL }}{{ movie.poster }}" class="img-responsive movie-poster">
+          <h5 class="movie-title">{{ movie }}</h5>
+          </div>
+          </a>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,33 @@
+{% extends 'form_in_card.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block before-card %}
+    {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            Username or password incorrect. Please try again.
+        </div>
+    {% endif %}
+
+    {% if next and next != '/' %}
+        <div class="alert alert-info" role="alert">
+        {% if user.isauthenticated %}
+            You do not have permission to access this page. Sign in with a more privileged account to continue.
+        {% else %}
+            Please sign in to continue.
+        {% endif %}
+        </div>
+    {% endif %}
+{% endblock before-card %}
+
+{% block card-header %}Login to MovieTrack{% endblock %}
+
+{% block form-technicals %}method="POST" action="{% url 'login'%}"{% endblock %}
+
+{% block in_form %}
+{% if next %}
+<input type="hidden" name="next" value="{{ next }}" />
+{% endif %}
+{% endblock %}
+
+{% block submit %}Login{% endblock %}

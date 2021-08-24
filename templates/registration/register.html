@@ -1,0 +1,9 @@
+{% extends 'form_in_card.html' %}
+
+{% block title %}Sign up{% endblock %}
+
+{% block card-header %}Sign up for MovieTrack{% endblock %}
+
+{% block form-technicals %}method="POST" action="{% url 'register'%}"{% endblock %}
+
+{% block submit %}Sign up{% endblock %}

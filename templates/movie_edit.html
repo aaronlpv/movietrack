@@ -1,0 +1,9 @@
+{% extends 'form_in_card.html' %}
+
+{% block title %}{{ movie.title }}{% endblock %}
+
+{% block card-header %}{{ movie.title }}{% endblock %}
+
+{% block form-technicals %}method="POST" action="" enctype="multipart/form-data"{% endblock %}
+
+{% block submit %}Save{% endblock %}

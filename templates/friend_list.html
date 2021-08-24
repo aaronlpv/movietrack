@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{{ profile.user.username }}s friends{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated and user == profile.user %}
+<script>
+    friends = {
+        {% for friend in friends %}
+        '{{ friend.user.id }}': true,
+        {% endfor %}
+        {% for req in outg_requests %}
+        '{{ req.receiver.user.id }}': false,
+        {% endfor %}
+    }
+</script>
+{% endif %}
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+        <h5 class="profile-header">
+        {% block card-header %}{{ profile.user.username }}'s friends{% endblock %}
+        </h5>
+        <form class="user-search-form" method="GET" action="{% url 'users' %}">
+            <input class="form-control user-search-box" type="text" name="q" placeholder="Search users...">
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <div class="col p-0">
+            {% if user.is_authenticated and user == profile.user %}
+                {% if inc_requests %}
+                    <div class="row m-0 px-3">Incoming requests</div>
+                    {% for req in inc_requests %}
+                        {% with friend=req.sender %}
+                        <div class="row m-0 p-3 border-top friendlist-entry">
+                            <div class="col">
+                                <img class="comment-pic" src="{{ friend.get_profile_pic }}">
+                            </div>
+                            <div class="col my-auto">
+                                <a href="{% url 'profile' friend.user.pk %}"> {{ friend }}</a> 
+                            </div>
+                            {% with pid=friend.user.id %}
+                            <div class="col my-auto">
+                                <button id="friend-toggle-{{ pid }}" type="button" class="btn btn-info mx-1" onclick="friend({{ pid }})">
+                                    <span class="fas fa-user-friends"></span> <span id="friend-status-{{ pid }}">Add friend</span>
+                                </button>
+                            </div>
+                            {% endwith %}
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
+                
+                {% if outg_requests %}
+                    <div class="row m-0 px-3 border-top">Pending requests</div>
+                    {% for req in outg_requests %}
+                        {% with friend=req.receiver %}
+                        <div class="row m-0 p-3 border-top friendlist-entry">
+                            <div class="col">
+                                <img class="comment-pic" src="{{ friend.get_profile_pic }}">
+                            </div>
+                            <div class="col my-auto">
+                                <a href="{% url 'profile' friend.user.pk %}"> {{ friend }}</a> 
+                            </div>
+                            {% with pid=friend.user.id %}
+                            <div class="col my-auto">
+                                <button id="friend-toggle-{{ pid }}" type="button" class="btn btn-secondary mx-1" onclick="friend({{ pid }})">
+                                    <span class="fas fa-user-friends"></span> <span id="friend-status-{{ pid }}">Friend request pending</span>
+                                </button>
+                            </div>
+                            {% endwith %}
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
+                
+                {% if inc_requests or outg_requests %}
+                <div class="row m-0 px-3 border-top">Friends</div>
+                {% endif %}
+            {% endif %}
+            {% for friend in profile.friends.all %}
+            <div class="row m-0 p-3 border-top friendlist-entry">
+                <div class="col">
+                    <img class="comment-pic" src="{{ friend.get_profile_pic }}">
+                </div>
+                <div class="col my-auto">
+                    <a href="{% url 'profile' friend.user.pk %}"> {{ friend }}</a> 
+                </div>
+                {% if user.is_authenticated and user == profile.user %}
+                    {% with pid=friend.user.id %}
+                    <div class="col my-auto">
+                        <button id="friend-toggle-{{ pid }}" type="button" class="btn btn-success mx-1" onclick="friend({{ pid }})">
+                            <span class="fas fa-user-friends"></span> <span id="friend-status-{{ pid }}">Friends</span>
+                        </button>
+                    </div>
+                    {% endwith %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

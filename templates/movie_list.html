@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="overlay">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-15 offset-sm-1">
+      <h1 class="page-header">
+        {% if title %}
+        {{ title }}
+        {% elif query %}
+        Results for "{{ query }}"
+		{% else %}
+        Movies
+        {% endif %}
+      </h1>
+      <button id="sidebarCollapse" class="btn btn-danger" onclick="getsidebar()">Movie Filters</button>
+      {% if user.is_authenticated %}
+      <a href="{% url 'movie-create' %}" class="btn btn-primary"><span class="fas fa-plus"></span> Add movie</a>
+      {% endif %}
+      <div class="movie-list">
+        {% if movies %}
+        {% for movie in movies %}
+        <a href="{% url 'movie' movie.pk %}">
+        <div class="movie-entry">
+		{% if user.is_authenticated and movie in seen and '/seen/' not in request.path%}
+        <img src="{{ MEDIA_URL }}{{ movie.poster }}" class= "img-responsive movie-seen-poster">
+		<h5 class="seen-word">SEEN</h5>
+		{% else %}
+		<img src="{{ MEDIA_URL }}{{ movie.poster }}" class= "img-responsive movie-poster">
+		{% endif %}
+        <h5 class="movie-title">{{ movie }}</h5>
+        </div>
+        </a>
+        {% endfor %}
+        {% endif %}
+      </div>
+	  </div>
+      </div>
+    </div>
+  </div>
+  
+<div class="wrapper">
+  <nav id="sidebar" class="active">
+    <div id="dismiss" onclick="hidesidebar()">
+    	<i class="fas fa-arrow-left" ></i>
+    </div>
+
+    <div class="sidebar-header">
+      <h5>Movie Filters</h5>
+    </div>
+    <ul class="list-unstyled components"  >
+      <li>
+        <a href="#genreSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Genre</a>
+        <ul class="collapse list-unstyled" id="genreSubmenu">
+          {% for genre in genres %}
+          <li>
+		  {% if '/want-to-watch/' in request.path %}
+            <a href="{% url 'wtw' user.id 'genre' genre %}" >{{ genre }}</a>
+		  {% elif '/seen/' in request.path %}
+			<a href="{% url 'seen' user.id 'genre' genre %}" >{{ genre }}</a>
+		  {% else %}
+			<a href="{% url 'home' 'genre' genre %}" >{{ genre }}</a>
+		  {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      <li>
+        <a href="#rateSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Ratings</a>
+        <ul class="collapse list-unstyled" id="rateSubmenu">
+          <li>
+            {% if '/want-to-watch/' in request.path %}
+            <a href="{% url 'wtw' user.id '-movierating'%}" >High - Low</a>
+		    {% elif '/seen/' in request.path %}
+			<a href="{% url 'seen' user.id '-movierating' %}" >High - Low</a>
+		    {% else %}
+			<a href="{% url 'home' '-movierating' %}" >High - Low</a>
+		    {% endif %}
+          </li>
+          <li>
+            {% if '/want-to-watch/' in request.path %}
+            <a href="{% url 'wtw' user.id 'movierating'%}" >Low - High</a>
+		    {% elif '/seen/' in request.path %}
+			<a href="{% url 'seen' user.id 'movierating' %}" >Low - High</a>
+		    {% else %}
+			<a href="{% url 'home' 'movierating' %}" >Low - High</a>
+		    {% endif %}
+          </li>
+        </ul>					
+      </li>
+      <li>
+        <a href="#dateSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Date</a>
+        <ul class="collapse list-unstyled" id="dateSubmenu">
+          <li>
+            {% if '/want-to-watch/' in request.path %}
+            <a href="{% url 'wtw' user.id '-year'%}" >New - Old</a>
+		    {% elif '/seen/' in request.path %}
+			<a href="{% url 'seen' user.id '-year' %}" >New - Old</a>
+		    {% else %}
+			<a href="{% url 'home' '-year' %}" >New - Old</a>
+		    {% endif %}
+          </li>
+          <li>
+            {% if '/want-to-watch/' in request.path %}
+            <a href="{% url 'wtw' user.id 'year'%}" >Old - New</a>
+		    {% elif '/seen/' in request.path %}
+			<a href="{% url 'seen' user.id 'year' %}" >Old - New</a>
+		    {% else %}
+			<a href="{% url 'home' 'year' %}" >Old - New</a>
+		    {% endif %}
+          </li>
+        </ul>		
+      </li>
+    </ul>
+  </nav>
+  
+</div>
+{% endblock content %}

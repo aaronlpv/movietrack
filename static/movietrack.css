@@ -1,0 +1,430 @@
+body {
+    padding-top: 70px;
+}
+.strong {
+    font-weight: bold;
+}
+.form-error {
+    color: darkred;
+}
+
+/* Movie list */
+.movie-entry {
+  position: relative;
+  margin: 5px;
+  float: left;
+}
+.movie-title {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  right: 12px;
+  height: auto;
+  margin: 0;
+  font-family: 'Helvetica Neue','Helvetica','Arial','sans-serif';
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 20px #000;
+  font-size: 18px;
+  text-align: left;
+  white-space: normal;
+}
+.seen-word {
+  position: absolute;
+  bottom: 150px;
+  left: 60px;
+  height: auto;
+  margin: 0;
+  font-family: 'Arial';
+  font-weight: bold;
+  color: #853434;
+  text-shadow: 0 0 20px #000;
+  font-size: 30px;
+  text-align: left;
+  white-space: normal;
+  border: 1px solid #853434 ;
+}
+.movie-poster {
+  max-height: 300px
+}
+.movie-seen-poster {
+	
+  opacity: 0.4;
+  max-height: 300px;
+}
+.movie-entry .movie-poster {
+  border: 2px solid white;
+}
+.movie-entry:hover .movie-poster {
+  border-color: red;
+}
+
+/* Search */
+#search-form {
+  position: relative;
+}
+#search-suggestions {
+  position: absolute;
+  display: none;
+  top: 34px;
+  left: 0px;
+  width: 400px;
+  box-shadow: 0 10px 15px 5px rgba(0,0,0,.2);
+  z-index: 100;
+}
+#search-form:focus-within #search-suggestions {
+  display: block;
+}
+.suggestion-poster {
+    display: inline-block;
+    max-width: 50px;
+    max-height: 50px;
+}
+.suggestion-title {
+    padding-left: 1em;
+}
+.suggestion {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Movie detail */
+.detail-genre {
+  color: white;
+  background-color: grey;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 80%;
+  transition-duration: 700ms;
+}
+.detail-genre:hover {
+  color: white;
+  text-decoration: none;
+  background: darkslategrey;
+  transition-duration: 700ms;
+}
+.detail-poster {
+    width: 100%;
+}
+.comment-pic {
+    width: 100px;
+    margin: 4px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.comment-meta {
+    background: #f6f6f6;
+    text-align: center;
+}
+.comment-timestamp {
+    background: lightgrey;
+}
+.comment-body {
+    white-space: pre-line;
+}
+
+/* User Profile */
+.profile-header {
+    display: inline-block;
+}
+.profile-pic {
+    width: 100%;
+}
+.profile-bio {
+    white-space: pre-line;
+}
+.profile-friends-header {
+    text-align: center;
+}
+.profile-friend-pic {
+    max-width: 70px;
+    max-height: 70px;
+}
+.profile-list-btn {
+    width: 50%
+}
+.profile-top-btns {
+    float: right;
+}
+.affinity-bar {
+    max-width: 200px;
+}
+.user-search-box {
+    max-width: 200px;
+}
+.user-search-form {
+    float: right;
+}
+
+/* Sidebar */
+
+
+.wrapper {
+    display: block;
+    width: 100%;
+}
+
+#sidebar.active {
+    margin-left: -280px;
+}
+a[data-toggle="collapse"] {
+    position: relative;
+}
+@media (max-width: 768px) {
+    #sidebar.active {
+        margin-left: -250px;
+    }
+    #sidebar {
+        margin-left: 0;
+    }
+}
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+
+#sidebar {
+    min-width: 280px;
+    max-width: 280px;
+    position: fixed;
+    top: 30px;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
+    background: #a10a0a;
+    color: #fff;
+    transition: all 0.3s;
+}
+#sidebar .sidebar-header {
+    padding-top: 90px ;
+	padding-bottom: 20px;
+	padding-left: 20px;
+    background: #870d0d;
+	
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+	border-top: 1px solid #47748b;
+}
+#sidebar a {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+#sidebar h5 {
+    font-size: 2.0em;
+    display: block;
+	font-family: 'Helvetica Neue','Helvetica','Arial','sans-serif';
+	font-weight: bold;
+	color: #fff2f2;
+	text-shadow: 0 0 10px #000;
+}
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+	color: #fff2f2;
+}
+#sidebar ul li a:hover {
+    color: #ae0303;
+    background: #fff;
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #ae0303;
+	color: #fff2f2;
+}
+
+
+.overlay.active {
+    position: fixed;
+    /* full screen */
+    width: 100vw;
+    height: 100vh;
+    /* middle layer, i.e. appears below the sidebar */
+    z-index: 999;
+    opacity: 0.2;
+    /* animate the transition */
+    transition: all 0.2s ease-in-out;
+}
+/* display .overlay when it has the .active class */
+.overlay{
+    opacity: 1;
+}
+
+#dismiss {
+	padding:4px;
+    position: absolute;
+    /* top right corner of the sidebar */
+    top: 80px;
+    right:1px;
+	border:1px solid #47748b ;
+	color: #d6d1d1;
+}
+
+/* Events */
+#mapid { 
+    height: 350px; 
+}
+
+/*Create event form */
+* {box-sizing: border-box}
+/* Full-width input fields */
+  input[type=text], input[type=date], input[type=time], input[type=number]{
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* Add a background color when the inputs get focus */
+input[type=text]:focus{
+  background-color: #ddd;
+  outline: none;
+}
+
+
+/* Float cancel and submit buttons and add an equal width */
+.cancelbtn, .submitbtn {
+  float: left;
+  width: 50%;
+  height: 50px;
+}
+
+/*Changing colors of cancel btn and submit btn */
+.cancelbtn {
+	background-color: #d9534f;
+}
+.submitbtn {
+	background-color: #5cb85c;
+}
+
+/* Add padding to container elements */
+.container {
+  padding: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: #474e5d;
+  padding-top: 50px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* Style the horizontal ruler */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 35px;
+  top: 15px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #f1f1f1;
+}
+
+.close:hover,
+.close:focus {
+  color: #f44336;
+  cursor: pointer;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Change styles for cancel button and submit button on extra small screens */
+@media screen and (max-width: 300px) {
+  .cancelbtn, .submitbtn {
+    width: 100%;
+  }
+}
+
+.event_card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    margin-bottom: 1em;
+
+
+    height: 3em;
+    overflow:hidden;
+}
+
+/* On mouse-over, add a deeper shadow */
+.event_card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+/* Add some padding inside the card container */
+.event_container {
+    padding: 2px 16px;
+    padding-left: 0em;
+    padding-right: 0em;
+}
+
+.event_card h4:before{
+    content: '+';
+}
+
+.event_card h4 {
+    padding: 0.5em;
+    background-color: rgb(220, 53, 69);
+    color: white;
+}
+
+.event_card p {
+    padding: 0.5em;
+}
+
+.event_toggled {
+    height: auto;
+}
+
+.event_toggled h4:before{
+    content: '-';
+}
+
+.hover_button {
+    float: right; 
+    opacity: 0.3;
+    margin-right: 0.3em;
+}
+
+.hover_button:hover {
+    opacity: 1;
+}

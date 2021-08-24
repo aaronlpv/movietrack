@@ -1,0 +1,11 @@
+{% extends 'form_in_card.html' %}
+
+{% block title %}Create movie{% endblock %}
+
+{% block card-header %}Create movie{% endblock %}
+
+{% block before-form %}<a href="{% url 'movie-import' %}">Or import from IMDB</a>{% endblock %}
+
+{% block form-technicals %}method="POST" action="" enctype="multipart/form-data"{% endblock %}
+
+{% block submit %}Save{% endblock %}

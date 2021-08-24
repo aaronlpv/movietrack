@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--
+  <meta name="description" content="">
+  <meta name="author" content="">-->
+  <link rel="icon" href="{% static 'favicon.png' %}">
+
+  <title>{% block title %}MovieTrack{% endblock %}</title>
+
+  <link href="{% static 'dist/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'movietrack.css' %}" rel="stylesheet">
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <!-- Scrollbar Custom CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+</head>
+
+<body>
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">MovieTrack</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      {% if user.is_authenticated %}
+      <ul class="navbar-nav mt-2 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'wtw' user.id %}">Want To Watch</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'seen' user.id %}">Seen</a>
+        </li>
+	<li class="nav-item">
+          <a class="nav-link" href="{% url 'events' %}">Events</a>
+        </li>
+      </ul>
+      {% endif %}
+
+      <form class="form-inline mr-auto ml-3" id="search-form" action="{% url 'home' %}">
+        <input type="search" class="form-control mr-1" id="search-field" aria-label="Search movies" name="q" placeholder="Search movies..." autocomplete="off" onkeyup="showSuggestions(this.value)">
+        <ul id="search-suggestions" class="list-group"></ul>
+        <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Search</button>
+      </form>
+      <ul class="navbar-nav justify-content-end">
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'profile' user.id %}">{{ user.username }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Sign in</a>
+        </li>
+        <li class="navbar-text">or</li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}">Sign up</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+{% block content %}
+{% endblock content %}
+  <script type="text/javascript">CSRF = "{{ csrf_token }}";</script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+  <script src="{% static '/dist/js/popper.min.js' %}"></script>
+  <script src="{% static '/dist/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'movie-search.js' %}"></script>
+  <!-- jQuery Custom Scroller CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+  
+</body>
+
+</html>
